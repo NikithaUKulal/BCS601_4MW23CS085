@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, render_template, request
 import math
 
 app = Flask(__name__)
@@ -10,7 +10,6 @@ def home():
 
     if request.method == "POST":
 
-        # HCF & LCM
         if active == "hcf":
             num1 = int(request.form["num1"])
             num2 = int(request.form["num2"])
@@ -23,152 +22,15 @@ def home():
                 lcm = (num1 * num2) // hcf
                 result = f"Output: LCM = {lcm}"
 
-        # Reverse String
         elif active == "reverse":
             text = request.form["text"]
             result = f"Output: {text[::-1]}"
 
-        # Factorial
         elif active == "fact":
             num = int(request.form["num"])
             result = f"Output: {num}! = {math.factorial(num)}"
 
-    return f"""
-    <html>
-    <head>
-        <title>Cloud Project</title>
-        <style>
-            body {{
-                font-family: Arial;
-                background: linear-gradient(to right, #667eea, #764ba2);
-                color: white;
-                text-align: center;
-                padding: 20px;
-            }}
-
-            h1 {{
-                margin-bottom: 20px;
-            }}
-
-            .nav {{
-                margin-bottom: 30px;
-            }}
-
-            .nav a {{
-                text-decoration: none;
-                color: white;
-                padding: 10px 20px;
-                margin: 5px;
-                border-radius: 20px;
-                background: rgba(255,255,255,0.2);
-            }}
-
-            .active {{
-                background: white !important;
-                color: black !important;
-                font-weight: bold;
-            }}
-
-            .nav a:hover {{
-                background: rgba(255,255,255,0.5);
-                color: black;
-            }}
-
-            .card {{
-                background: white;
-                color: black;
-                padding: 20px;
-                border-radius: 15px;
-                width: 320px;
-                margin: auto;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            }}
-
-            input {{
-                padding: 10px;
-                margin: 10px;
-                width: 80%;
-                border-radius: 10px;
-                border: 2px solid #ccc;
-                background: #f9f9f9;
-            }}
-
-            button {{
-                padding: 10px;
-                margin: 5px;
-                border-radius: 10px;
-                border: none;
-                background: #667eea;
-                color: white;
-                cursor: pointer;
-            }}
-
-            button:hover {{
-                background: #764ba2;
-            }}
-
-            .result {{
-                margin-top: 20px;
-                font-weight: bold;
-            }}
-        </style>
-    </head>
-
-    <body>
-
-    <h1>✨ Cloud Based Mini Project</h1>
-
-    <div class="nav">
-        <a href="/?tab=hcf" class="{ 'active' if active=='hcf' else '' }">HCF & LCM</a>
-        <a href="/?tab=reverse" class="{ 'active' if active=='reverse' else '' }">Reverse String</a>
-        <a href="/?tab=fact" class="{ 'active' if active=='fact' else '' }">Factorial</a>
-    </div>
-
-    <div class="card">
-    """
-
-    + (
-        """
-        <form method="post" action="/?tab=hcf">
-            <input name="num1" placeholder="Enter Number 1"><br>
-            <input name="num2" placeholder="Enter Number 2"><br>
-            <button name="action" value="hcf">HCF</button>
-            <button name="action" value="lcm">LCM</button>
-        </form>
-        """
-        if active == "hcf"
-        else ""
-    )
-
-    + (
-        """
-        <form method="post" action="/?tab=reverse">
-            <input name="text" placeholder="Enter string to reverse"><br>
-            <button type="submit">Reverse</button>
-        </form>
-        """
-        if active == "reverse"
-        else ""
-    )
-
-    + (
-        """
-        <form method="post" action="/?tab=fact">
-            <input name="num" placeholder="Enter number"><br>
-            <button type="submit">Find Factorial</button>
-        </form>
-        """
-        if active == "fact"
-        else ""
-    )
-
-    + f"""
-        <div class="result">{result}</div>
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template("index.html", active=active, result=result)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
