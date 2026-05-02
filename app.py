@@ -6,44 +6,157 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    active = request.args.get("tab", "hcf")
     result = ""
 
     if request.method == "POST":
-        num1 = int(request.form["num1"])
-        num2 = int(request.form["num2"])
-        text = request.form["text"]
 
-        # HCF and LCM
-        hcf = math.gcd(num1, num2)
-        lcm = (num1 * num2) // hcf
+        # HCF & LCM
+        if active == "hcf":
+            num1 = int(request.form["num1"])
+            num2 = int(request.form["num2"])
 
-        # Reverse string
-        rev = text[::-1]
+            hcf = math.gcd(num1, num2)
+            lcm = (num1 * num2) // hcf
 
-        # Factorials
-        fact = ""
-        for i in range(4, 9):
-            fact += f"{i}! = {math.factorial(i)}<br>"
+            result = f"HCF = {hcf} <br> LCM = {lcm}"
 
-        result = f"""
-        HCF = {hcf} <br>
-        LCM = {lcm} <br><br>
-        Reversed String = {rev} <br><br>
-        Factorials:<br>{fact}
-        """
+        # Reverse String
+        elif active == "reverse":
+            text = request.form["text"]
+            result = f"Reversed String = {text[::-1]}"
+
+        # Factorial
+        elif active == "fact":
+            fact = ""
+            for i in range(4, 9):
+                fact += f"{i}! = {math.factorial(i)}<br>"
+            result = fact
 
     return f"""
-    <h2>Simple Cloud Project</h2>
+    <html>
+    <head>
+        <title>Cloud Project</title>
+        <style>
+            body {{
+                font-family: Arial;
+                background: linear-gradient(to right, #667eea, #764ba2);
+                color: white;
+                text-align: center;
+                padding: 20px;
+            }}
 
-    <form method="post">
-        Enter Number 1: <input name="num1"><br><br>
-        Enter Number 2: <input name="num2"><br><br>
-        Enter String: <input name="text"><br><br>
-        <button type="submit">Submit</button>
-    </form>
+            h1 {{
+                margin-bottom: 20px;
+            }}
 
-    <br>{result}
+            .nav {{
+                margin-bottom: 30px;
+            }}
+
+            .nav a {{
+                text-decoration: none;
+                color: white;
+                padding: 10px 20px;
+                margin: 5px;
+                border-radius: 20px;
+                background: rgba(255,255,255,0.2);
+            }}
+
+            .nav a:hover {{
+                background: rgba(255,255,255,0.5);
+                color: black;
+            }}
+
+            .card {{
+                background: white;
+                color: black;
+                padding: 20px;
+                border-radius: 15px;
+                width: 300px;
+                margin: auto;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            }}
+
+            input, button {{
+                padding: 10px;
+                margin: 10px;
+                width: 80%;
+                border-radius: 10px;
+                border: none;
+            }}
+
+            button {{
+                background: #667eea;
+                color: white;
+                cursor: pointer;
+            }}
+
+            button:hover {{
+                background: #764ba2;
+            }}
+
+            .result {{
+                margin-top: 20px;
+                font-weight: bold;
+            }}
+        </style>
+    </head>
+
+    <body>
+
+    <h1>✨ Cloud Based Mini Project</h1>
+
+    <div class="nav">
+        <a href="/?tab=hcf">HCF & LCM</a>
+        <a href="/?tab=reverse">Reverse String</a>
+        <a href="/?tab=fact">Factorial</a>
+    </div>
+
+    <div class="card">
     """
+
+    + (
+        """
+        <form method="post">
+            <input name="num1" placeholder="Enter Number 1"><br>
+            <input name="num2" placeholder="Enter Number 2"><br>
+            <button type="submit">Calculate</button>
+        </form>
+        """
+        if active == "hcf"
+        else ""
+    )
+
+    + (
+        """
+        <form method="post">
+            <input name="text" placeholder="Enter String"><br>
+            <button type="submit">Reverse</button>
+        </form>
+        """
+        if active == "reverse"
+        else ""
+    )
+
+    + (
+        """
+        <form method="post">
+            <button type="submit">Show Factorials (4-8)</button>
+        </form>
+        """
+        if active == "fact"
+        else ""
+    )
+
+    + f"""
+        <div class="result">{result}</div>
+    </div>
+
+    </body>
+    </html>
+    """
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
