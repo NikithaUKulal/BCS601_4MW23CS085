@@ -10,24 +10,28 @@ def home():
 
     if request.method == "POST":
 
+        # HCF & LCM
         if active == "hcf":
             num1 = int(request.form["num1"])
             num2 = int(request.form["num2"])
+            action = request.form.get("action")
 
-            hcf = math.gcd(num1, num2)
-            lcm = (num1 * num2) // hcf
+            if action == "hcf":
+                result = f"Output: HCF = {math.gcd(num1, num2)}"
+            elif action == "lcm":
+                hcf = math.gcd(num1, num2)
+                lcm = (num1 * num2) // hcf
+                result = f"Output: LCM = {lcm}"
 
-            result = f"HCF = {hcf} <br> LCM = {lcm}"
-
+        # Reverse String
         elif active == "reverse":
             text = request.form["text"]
-            result = f"Reversed String = {text[::-1]}"
+            result = f"Output: {text[::-1]}"
 
+        # Factorial
         elif active == "fact":
-            fact = ""
-            for i in range(4, 9):
-                fact += f"{i}! = {math.factorial(i)}<br>"
-            result = fact
+            num = int(request.form["num"])
+            result = f"Output: {num}! = {math.factorial(num)}"
 
     return f"""
     <html>
@@ -75,20 +79,25 @@ def home():
                 color: black;
                 padding: 20px;
                 border-radius: 15px;
-                width: 300px;
+                width: 320px;
                 margin: auto;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             }}
 
-            input, button {{
+            input {{
                 padding: 10px;
                 margin: 10px;
                 width: 80%;
                 border-radius: 10px;
-                border: none;
+                border: 2px solid #ccc;
+                background: #f9f9f9;
             }}
 
             button {{
+                padding: 10px;
+                margin: 5px;
+                border-radius: 10px;
+                border: none;
                 background: #667eea;
                 color: white;
                 cursor: pointer;
@@ -119,11 +128,12 @@ def home():
     """
 
     + (
-        f"""
+        """
         <form method="post" action="/?tab=hcf">
             <input name="num1" placeholder="Enter Number 1"><br>
             <input name="num2" placeholder="Enter Number 2"><br>
-            <button type="submit">Calculate</button>
+            <button name="action" value="hcf">HCF</button>
+            <button name="action" value="lcm">LCM</button>
         </form>
         """
         if active == "hcf"
@@ -131,9 +141,9 @@ def home():
     )
 
     + (
-        f"""
+        """
         <form method="post" action="/?tab=reverse">
-            <input name="text" placeholder="Enter String"><br>
+            <input name="text" placeholder="Enter string to reverse"><br>
             <button type="submit">Reverse</button>
         </form>
         """
@@ -142,9 +152,10 @@ def home():
     )
 
     + (
-        f"""
+        """
         <form method="post" action="/?tab=fact">
-            <button type="submit">Show Factorials (4-8)</button>
+            <input name="num" placeholder="Enter number"><br>
+            <button type="submit">Find Factorial</button>
         </form>
         """
         if active == "fact"
